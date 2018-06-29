@@ -128,6 +128,33 @@ namespace SmtpClientDemo.WinForms
 			comboBoxAuth.SelectedValueChanged += ComboBoxAuthOnSelectedValueChanged;
 		}
 
+		private void LoadAuthComboBoxValues(SmtpClient client = null)
+		{
+			if (InvokeRequired)
+			{
+				Invoke(new Action(() =>
+				{
+					LoadAuthComboBoxValues(client);
+				}));
+			}
+
+			List<string> authComboBoxData = new List<string> { NONE };
+
+			if ((client != null) &&
+				(client.IsConnected))
+			{
+				if (client.AuthenticationMechanisms.Count > 0)
+				{
+					authComboBoxData.Add(AUTO);
+				}
+
+				authComboBoxData.AddRange(client.AuthenticationMechanisms);
+			}
+
+			comboBoxAuth.DataSource = new BindingSource(authComboBoxData, null);
+		}
+
+
 		private void LoadSslComboBoxValues()
 		{
 			Dictionary<string, SecureSocketOptions> sslComboBoxData = new Dictionary<string, SecureSocketOptions>();
@@ -158,17 +185,17 @@ namespace SmtpClientDemo.WinForms
 				m_Server = textBoxServer.Text;
 				await UpdateAuthComboBoxValues();
 
-				Invoke(new Action(() =>
-				{
-					if (buttonSend.Focused)
-					{
-						buttonSend.PerformClick();
-					}
-					else if (buttonCopy.Focused)
-					{
-						buttonCopy.PerformClick();
-					}
-				}));
+				//Invoke(new Action(() =>
+				//{
+				//	if (buttonSend.Focused)
+				//	{
+				//		buttonSend.PerformClick();
+				//	}
+				//	else if (buttonCopy.Focused)
+				//	{
+				//		buttonCopy.PerformClick();
+				//	}
+				//}));
 			}
 		}
 
@@ -187,17 +214,17 @@ namespace SmtpClientDemo.WinForms
 				m_Port = textBoxPort.Text;
 				await UpdateAuthComboBoxValues();
 
-				Invoke(new Action(() =>
-				{
-					if (buttonSend.Focused)
-					{
-						buttonSend.PerformClick();
-					}
-					else if (buttonCopy.Focused)
-					{
-						buttonCopy.PerformClick();
-					}
-				}));
+				//Invoke(new Action(() =>
+				//{
+				//	if (buttonSend.Focused)
+				//	{
+				//		buttonSend.PerformClick();
+				//	}
+				//	else if (buttonCopy.Focused)
+				//	{
+				//		buttonCopy.PerformClick();
+				//	}
+				//}));
 			}
 		}
 
@@ -428,32 +455,6 @@ namespace SmtpClientDemo.WinForms
 
 				UpdateFormState(true);
 			}
-		}
-
-		private void LoadAuthComboBoxValues(SmtpClient client = null)
-		{
-			if (InvokeRequired)
-			{
-				Invoke(new Action(() =>
-				{
-					LoadAuthComboBoxValues(client);
-				}));
-			}
-
-			List<string> authComboBoxData = new List<string> { NONE };
-
-			if ((client != null) &&
-				(client.IsConnected))
-			{
-				if (client.AuthenticationMechanisms.Count > 0)
-				{
-					authComboBoxData.Add(AUTO);
-				}
-
-				authComboBoxData.AddRange(client.AuthenticationMechanisms);
-			}
-
-			comboBoxAuth.DataSource = new BindingSource(authComboBoxData, null);
 		}
 
 		#endregion Private Methods
