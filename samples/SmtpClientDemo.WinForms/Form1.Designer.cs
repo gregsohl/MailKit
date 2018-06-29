@@ -348,18 +348,19 @@
 			// 
 			this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.progressBar1.Location = new System.Drawing.Point(-3, 439);
+			this.progressBar1.Location = new System.Drawing.Point(0, 439);
 			this.progressBar1.MarqueeAnimationSpeed = 0;
 			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(554, 10);
+			this.progressBar1.Size = new System.Drawing.Size(555, 10);
 			this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.progressBar1.TabIndex = 31;
 			// 
 			// SmtpClientDemo
 			// 
+			this.AcceptButton = this.buttonSend;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(547, 487);
+			this.ClientSize = new System.Drawing.Size(555, 499);
 			this.Controls.Add(this.progressBar1);
 			this.Controls.Add(this.comboBoxSSL);
 			this.Controls.Add(this.buttonSend);
