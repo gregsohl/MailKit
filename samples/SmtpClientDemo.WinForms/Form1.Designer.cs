@@ -58,6 +58,11 @@
 			this.buttonSend = new System.Windows.Forms.Button();
 			this.comboBoxSSL = new System.Windows.Forms.ComboBox();
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
+			this.txtRepeatSeconds = new System.Windows.Forms.NumericUpDown();
+			this.label12 = new System.Windows.Forms.Label();
+			this.buttonRepeatedSend = new System.Windows.Forms.Button();
+			this.buttonListServerCapabilities = new System.Windows.Forms.Button();
+			((System.ComponentModel.ISupportInitialize)(this.txtRepeatSeconds)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -278,13 +283,13 @@
 			// 
 			this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonClose.Location = new System.Drawing.Point(460, 457);
+			this.buttonClose.Location = new System.Drawing.Point(460, 464);
 			this.buttonClose.Name = "buttonClose";
 			this.buttonClose.Size = new System.Drawing.Size(75, 23);
 			this.buttonClose.TabIndex = 17;
-			this.buttonClose.Text = "Close";
+			this.buttonClose.Text = "C&lose";
 			this.buttonClose.UseVisualStyleBackColor = true;
-			this.buttonClose.Click += new System.EventHandler(this.BtnCloseOnClick);
+			this.buttonClose.Click += new System.EventHandler(this.ButtonCloseOnClick);
 			// 
 			// textBoxLog
 			// 
@@ -316,7 +321,7 @@
 			this.buttonCopy.Name = "buttonCopy";
 			this.buttonCopy.Size = new System.Drawing.Size(117, 23);
 			this.buttonCopy.TabIndex = 15;
-			this.buttonCopy.Text = "Copy to Clipboard";
+			this.buttonCopy.Text = "&Copy to Clipboard";
 			this.buttonCopy.UseVisualStyleBackColor = true;
 			this.buttonCopy.Click += new System.EventHandler(this.ButtonCopyOnClick);
 			// 
@@ -324,11 +329,11 @@
 			// 
 			this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonSend.Location = new System.Drawing.Point(379, 457);
+			this.buttonSend.Location = new System.Drawing.Point(379, 464);
 			this.buttonSend.Name = "buttonSend";
 			this.buttonSend.Size = new System.Drawing.Size(75, 23);
 			this.buttonSend.TabIndex = 16;
-			this.buttonSend.Text = "Send";
+			this.buttonSend.Text = "&Send";
 			this.buttonSend.UseVisualStyleBackColor = true;
 			this.buttonSend.Click += new System.EventHandler(this.ButtonSendOnClick);
 			// 
@@ -355,12 +360,76 @@
 			this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.progressBar1.TabIndex = 31;
 			// 
+			// txtRepeatSeconds
+			// 
+			this.txtRepeatSeconds.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+			this.txtRepeatSeconds.Location = new System.Drawing.Point(123, 465);
+			this.txtRepeatSeconds.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+			this.txtRepeatSeconds.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+			this.txtRepeatSeconds.Name = "txtRepeatSeconds";
+			this.txtRepeatSeconds.Size = new System.Drawing.Size(65, 20);
+			this.txtRepeatSeconds.TabIndex = 32;
+			this.txtRepeatSeconds.ThousandsSeparator = true;
+			this.txtRepeatSeconds.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+			// 
+			// label12
+			// 
+			this.label12.AutoSize = true;
+			this.label12.Location = new System.Drawing.Point(194, 469);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(47, 13);
+			this.label12.TabIndex = 33;
+			this.label12.Text = "seconds";
+			// 
+			// buttonRepeatedSend
+			// 
+			this.buttonRepeatedSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.buttonRepeatedSend.Location = new System.Drawing.Point(15, 464);
+			this.buttonRepeatedSend.Name = "buttonRepeatedSend";
+			this.buttonRepeatedSend.Size = new System.Drawing.Size(102, 23);
+			this.buttonRepeatedSend.TabIndex = 34;
+			this.buttonRepeatedSend.Text = "&Repeated Send";
+			this.buttonRepeatedSend.UseVisualStyleBackColor = true;
+			this.buttonRepeatedSend.Click += new System.EventHandler(this.ButtonRepeatedSendOnClick);
+			// 
+			// buttonListServerCapabilities
+			// 
+			this.buttonListServerCapabilities.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonListServerCapabilities.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.buttonListServerCapabilities.Location = new System.Drawing.Point(388, 394);
+			this.buttonListServerCapabilities.Name = "buttonListServerCapabilities";
+			this.buttonListServerCapabilities.Size = new System.Drawing.Size(147, 23);
+			this.buttonListServerCapabilities.TabIndex = 35;
+			this.buttonListServerCapabilities.Text = "List Server Capabilities";
+			this.buttonListServerCapabilities.UseVisualStyleBackColor = true;
+			this.buttonListServerCapabilities.Click += new System.EventHandler(this.ButtonListServerCapabilitiesOnClick);
+			// 
 			// SmtpClientDemo
 			// 
 			this.AcceptButton = this.buttonSend;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(555, 499);
+			this.Controls.Add(this.buttonListServerCapabilities);
+			this.Controls.Add(this.buttonRepeatedSend);
+			this.Controls.Add(this.label12);
+			this.Controls.Add(this.txtRepeatSeconds);
 			this.Controls.Add(this.progressBar1);
 			this.Controls.Add(this.comboBoxSSL);
 			this.Controls.Add(this.buttonSend);
@@ -394,6 +463,7 @@
 			this.MinimumSize = new System.Drawing.Size(563, 526);
 			this.Name = "SmtpClientDemo";
 			this.Text = "MailKit SMTP Client Demo - WinForms";
+			((System.ComponentModel.ISupportInitialize)(this.txtRepeatSeconds)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -431,6 +501,10 @@
 		private System.Windows.Forms.Button buttonSend;
 		private System.Windows.Forms.ComboBox comboBoxSSL;
 		private System.Windows.Forms.ProgressBar progressBar1;
+		private System.Windows.Forms.NumericUpDown txtRepeatSeconds;
+		private System.Windows.Forms.Label label12;
+		private System.Windows.Forms.Button buttonRepeatedSend;
+		private System.Windows.Forms.Button buttonListServerCapabilities;
 	}
 }
 
