@@ -60,6 +60,8 @@
     <Compile Include="RepeatStatus.Designer.cs">
       <DependentUpon>RepeatStatus.cs</DependentUpon>
     </Compile>
+    <Compile Include="SendResult.cs" />
+    <Compile Include="SmtpClientMailKit.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -87,7 +89,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MailKit\MailKit.Net45.csproj">

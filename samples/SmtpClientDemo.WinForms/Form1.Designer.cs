@@ -58,11 +58,16 @@
 			this.buttonSend = new System.Windows.Forms.Button();
 			this.comboBoxSSL = new System.Windows.Forms.ComboBox();
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
-			this.txtRepeatSeconds = new System.Windows.Forms.NumericUpDown();
-			this.label12 = new System.Windows.Forms.Label();
-			this.buttonRepeatedSend = new System.Windows.Forms.Button();
 			this.buttonListServerCapabilities = new System.Windows.Forms.Button();
-			((System.ComponentModel.ISupportInitialize)(this.txtRepeatSeconds)).BeginInit();
+			this.groupBoxRepeat = new System.Windows.Forms.GroupBox();
+			this.label13 = new System.Windows.Forms.Label();
+			this.textBoxBatchSize = new System.Windows.Forms.NumericUpDown();
+			this.buttonRepeatedSend = new System.Windows.Forms.Button();
+			this.label12 = new System.Windows.Forms.Label();
+			this.textBoxRepeatSeconds = new System.Windows.Forms.NumericUpDown();
+			this.groupBoxRepeat.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.textBoxBatchSize)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.textBoxRepeatSeconds)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -164,7 +169,7 @@
 			this.textBoxFrom.Location = new System.Drawing.Point(76, 6);
 			this.textBoxFrom.Name = "textBoxFrom";
 			this.textBoxFrom.Size = new System.Drawing.Size(459, 20);
-			this.textBoxFrom.TabIndex = 1;
+			this.textBoxFrom.TabIndex = 0;
 			// 
 			// textBoxTo
 			// 
@@ -173,7 +178,7 @@
 			this.textBoxTo.Location = new System.Drawing.Point(76, 32);
 			this.textBoxTo.Name = "textBoxTo";
 			this.textBoxTo.Size = new System.Drawing.Size(459, 20);
-			this.textBoxTo.TabIndex = 2;
+			this.textBoxTo.TabIndex = 1;
 			// 
 			// textBoxCC
 			// 
@@ -182,7 +187,7 @@
 			this.textBoxCC.Location = new System.Drawing.Point(76, 58);
 			this.textBoxCC.Name = "textBoxCC";
 			this.textBoxCC.Size = new System.Drawing.Size(459, 20);
-			this.textBoxCC.TabIndex = 3;
+			this.textBoxCC.TabIndex = 2;
 			// 
 			// textBoxBCC
 			// 
@@ -191,7 +196,7 @@
 			this.textBoxBCC.Location = new System.Drawing.Point(76, 84);
 			this.textBoxBCC.Name = "textBoxBCC";
 			this.textBoxBCC.Size = new System.Drawing.Size(459, 20);
-			this.textBoxBCC.TabIndex = 4;
+			this.textBoxBCC.TabIndex = 3;
 			// 
 			// textBoxSubject
 			// 
@@ -200,7 +205,7 @@
 			this.textBoxSubject.Location = new System.Drawing.Point(76, 110);
 			this.textBoxSubject.Name = "textBoxSubject";
 			this.textBoxSubject.Size = new System.Drawing.Size(459, 20);
-			this.textBoxSubject.TabIndex = 5;
+			this.textBoxSubject.TabIndex = 4;
 			// 
 			// textBoxServer
 			// 
@@ -209,7 +214,7 @@
 			this.textBoxServer.Location = new System.Drawing.Point(76, 233);
 			this.textBoxServer.Name = "textBoxServer";
 			this.textBoxServer.Size = new System.Drawing.Size(230, 20);
-			this.textBoxServer.TabIndex = 7;
+			this.textBoxServer.TabIndex = 6;
 			this.textBoxServer.Leave += new System.EventHandler(this.TextBoxServerOnLeave);
 			// 
 			// textBoxPort
@@ -218,7 +223,7 @@
 			this.textBoxPort.Location = new System.Drawing.Point(388, 233);
 			this.textBoxPort.Name = "textBoxPort";
 			this.textBoxPort.Size = new System.Drawing.Size(147, 20);
-			this.textBoxPort.TabIndex = 8;
+			this.textBoxPort.TabIndex = 7;
 			this.textBoxPort.Leave += new System.EventHandler(this.TextBoxPortOnLeave);
 			// 
 			// comboBoxAuth
@@ -230,7 +235,7 @@
 			this.comboBoxAuth.Location = new System.Drawing.Point(388, 259);
 			this.comboBoxAuth.Name = "comboBoxAuth";
 			this.comboBoxAuth.Size = new System.Drawing.Size(147, 21);
-			this.comboBoxAuth.TabIndex = 10;
+			this.comboBoxAuth.TabIndex = 9;
 			// 
 			// labelPassword
 			// 
@@ -258,7 +263,7 @@
 			this.textBoxUser.Location = new System.Drawing.Point(76, 286);
 			this.textBoxUser.Name = "textBoxUser";
 			this.textBoxUser.Size = new System.Drawing.Size(230, 20);
-			this.textBoxUser.TabIndex = 11;
+			this.textBoxUser.TabIndex = 10;
 			// 
 			// textBoxPassword
 			// 
@@ -266,7 +271,7 @@
 			this.textBoxPassword.Location = new System.Drawing.Point(388, 287);
 			this.textBoxPassword.Name = "textBoxPassword";
 			this.textBoxPassword.Size = new System.Drawing.Size(147, 20);
-			this.textBoxPassword.TabIndex = 12;
+			this.textBoxPassword.TabIndex = 11;
 			this.textBoxPassword.UseSystemPasswordChar = true;
 			// 
 			// textBoxMessage
@@ -277,16 +282,17 @@
 			this.textBoxMessage.Multiline = true;
 			this.textBoxMessage.Name = "textBoxMessage";
 			this.textBoxMessage.Size = new System.Drawing.Size(459, 91);
-			this.textBoxMessage.TabIndex = 6;
+			this.textBoxMessage.TabIndex = 5;
 			// 
 			// buttonClose
 			// 
 			this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.buttonClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonClose.Location = new System.Drawing.Point(460, 464);
+			this.buttonClose.Location = new System.Drawing.Point(460, 498);
 			this.buttonClose.Name = "buttonClose";
 			this.buttonClose.Size = new System.Drawing.Size(75, 23);
-			this.buttonClose.TabIndex = 17;
+			this.buttonClose.TabIndex = 14;
 			this.buttonClose.Text = "C&lose";
 			this.buttonClose.UseVisualStyleBackColor = true;
 			this.buttonClose.Click += new System.EventHandler(this.ButtonCloseOnClick);
@@ -301,7 +307,7 @@
 			this.textBoxLog.Name = "textBoxLog";
 			this.textBoxLog.ReadOnly = true;
 			this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBoxLog.Size = new System.Drawing.Size(459, 76);
+			this.textBoxLog.Size = new System.Drawing.Size(459, 89);
 			this.textBoxLog.TabIndex = 14;
 			// 
 			// label7
@@ -317,10 +323,11 @@
 			// 
 			this.buttonCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.buttonCopy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonCopy.Location = new System.Drawing.Point(76, 394);
+			this.buttonCopy.Location = new System.Drawing.Point(76, 408);
 			this.buttonCopy.Name = "buttonCopy";
 			this.buttonCopy.Size = new System.Drawing.Size(117, 23);
 			this.buttonCopy.TabIndex = 15;
+			this.buttonCopy.TabStop = false;
 			this.buttonCopy.Text = "&Copy to Clipboard";
 			this.buttonCopy.UseVisualStyleBackColor = true;
 			this.buttonCopy.Click += new System.EventHandler(this.ButtonCopyOnClick);
@@ -329,10 +336,10 @@
 			// 
 			this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonSend.Location = new System.Drawing.Point(379, 464);
+			this.buttonSend.Location = new System.Drawing.Point(379, 498);
 			this.buttonSend.Name = "buttonSend";
 			this.buttonSend.Size = new System.Drawing.Size(75, 23);
-			this.buttonSend.TabIndex = 16;
+			this.buttonSend.TabIndex = 13;
 			this.buttonSend.Text = "&Send";
 			this.buttonSend.UseVisualStyleBackColor = true;
 			this.buttonSend.Click += new System.EventHandler(this.ButtonSendOnClick);
@@ -347,89 +354,141 @@
 			this.comboBoxSSL.Location = new System.Drawing.Point(76, 260);
 			this.comboBoxSSL.Name = "comboBoxSSL";
 			this.comboBoxSSL.Size = new System.Drawing.Size(230, 21);
-			this.comboBoxSSL.TabIndex = 9;
+			this.comboBoxSSL.TabIndex = 8;
 			// 
 			// progressBar1
 			// 
 			this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.progressBar1.Location = new System.Drawing.Point(0, 439);
+			this.progressBar1.Location = new System.Drawing.Point(0, 441);
 			this.progressBar1.MarqueeAnimationSpeed = 0;
 			this.progressBar1.Name = "progressBar1";
 			this.progressBar1.Size = new System.Drawing.Size(555, 10);
 			this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.progressBar1.TabIndex = 31;
 			// 
-			// txtRepeatSeconds
-			// 
-			this.txtRepeatSeconds.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-			this.txtRepeatSeconds.Location = new System.Drawing.Point(123, 465);
-			this.txtRepeatSeconds.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-			this.txtRepeatSeconds.Minimum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-			this.txtRepeatSeconds.Name = "txtRepeatSeconds";
-			this.txtRepeatSeconds.Size = new System.Drawing.Size(65, 20);
-			this.txtRepeatSeconds.TabIndex = 32;
-			this.txtRepeatSeconds.ThousandsSeparator = true;
-			this.txtRepeatSeconds.Value = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-			// 
-			// label12
-			// 
-			this.label12.AutoSize = true;
-			this.label12.Location = new System.Drawing.Point(194, 469);
-			this.label12.Name = "label12";
-			this.label12.Size = new System.Drawing.Size(47, 13);
-			this.label12.TabIndex = 33;
-			this.label12.Text = "seconds";
-			// 
-			// buttonRepeatedSend
-			// 
-			this.buttonRepeatedSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonRepeatedSend.Location = new System.Drawing.Point(15, 464);
-			this.buttonRepeatedSend.Name = "buttonRepeatedSend";
-			this.buttonRepeatedSend.Size = new System.Drawing.Size(102, 23);
-			this.buttonRepeatedSend.TabIndex = 34;
-			this.buttonRepeatedSend.Text = "&Repeated Send";
-			this.buttonRepeatedSend.UseVisualStyleBackColor = true;
-			this.buttonRepeatedSend.Click += new System.EventHandler(this.ButtonRepeatedSendOnClick);
-			// 
 			// buttonListServerCapabilities
 			// 
 			this.buttonListServerCapabilities.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonListServerCapabilities.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonListServerCapabilities.Location = new System.Drawing.Point(388, 394);
+			this.buttonListServerCapabilities.Location = new System.Drawing.Point(388, 408);
 			this.buttonListServerCapabilities.Name = "buttonListServerCapabilities";
 			this.buttonListServerCapabilities.Size = new System.Drawing.Size(147, 23);
 			this.buttonListServerCapabilities.TabIndex = 35;
+			this.buttonListServerCapabilities.TabStop = false;
 			this.buttonListServerCapabilities.Text = "List Server Capabilities";
 			this.buttonListServerCapabilities.UseVisualStyleBackColor = true;
 			this.buttonListServerCapabilities.Click += new System.EventHandler(this.ButtonListServerCapabilitiesOnClick);
+			// 
+			// groupBoxRepeat
+			// 
+			this.groupBoxRepeat.Controls.Add(this.label13);
+			this.groupBoxRepeat.Controls.Add(this.textBoxBatchSize);
+			this.groupBoxRepeat.Controls.Add(this.buttonRepeatedSend);
+			this.groupBoxRepeat.Controls.Add(this.label12);
+			this.groupBoxRepeat.Controls.Add(this.textBoxRepeatSeconds);
+			this.groupBoxRepeat.Location = new System.Drawing.Point(7, 457);
+			this.groupBoxRepeat.Name = "groupBoxRepeat";
+			this.groupBoxRepeat.Size = new System.Drawing.Size(262, 68);
+			this.groupBoxRepeat.TabIndex = 38;
+			this.groupBoxRepeat.TabStop = false;
+			// 
+			// label13
+			// 
+			this.label13.AutoSize = true;
+			this.label13.Location = new System.Drawing.Point(192, 38);
+			this.label13.Name = "label13";
+			this.label13.Size = new System.Drawing.Size(55, 13);
+			this.label13.TabIndex = 42;
+			this.label13.Text = "batch size";
+			// 
+			// textBoxBatchSize
+			// 
+			this.textBoxBatchSize.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+			this.textBoxBatchSize.Location = new System.Drawing.Point(121, 36);
+			this.textBoxBatchSize.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+			this.textBoxBatchSize.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.textBoxBatchSize.Name = "textBoxBatchSize";
+			this.textBoxBatchSize.Size = new System.Drawing.Size(65, 20);
+			this.textBoxBatchSize.TabIndex = 2;
+			this.textBoxBatchSize.TabStop = false;
+			this.textBoxBatchSize.ThousandsSeparator = true;
+			this.textBoxBatchSize.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+			// 
+			// buttonRepeatedSend
+			// 
+			this.buttonRepeatedSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.buttonRepeatedSend.Location = new System.Drawing.Point(10, 23);
+			this.buttonRepeatedSend.Name = "buttonRepeatedSend";
+			this.buttonRepeatedSend.Size = new System.Drawing.Size(102, 23);
+			this.buttonRepeatedSend.TabIndex = 0;
+			this.buttonRepeatedSend.TabStop = false;
+			this.buttonRepeatedSend.Text = "&Repeated Send";
+			this.buttonRepeatedSend.UseVisualStyleBackColor = true;
+			this.buttonRepeatedSend.Click += new System.EventHandler(this.ButtonRepeatedSendOnClick);
+			// 
+			// label12
+			// 
+			this.label12.AutoSize = true;
+			this.label12.Location = new System.Drawing.Point(192, 17);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(61, 13);
+			this.label12.TabIndex = 39;
+			this.label12.Text = "sec interval";
+			// 
+			// textBoxRepeatSeconds
+			// 
+			this.textBoxRepeatSeconds.Increment = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+			this.textBoxRepeatSeconds.Location = new System.Drawing.Point(121, 13);
+			this.textBoxRepeatSeconds.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+			this.textBoxRepeatSeconds.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+			this.textBoxRepeatSeconds.Name = "textBoxRepeatSeconds";
+			this.textBoxRepeatSeconds.Size = new System.Drawing.Size(65, 20);
+			this.textBoxRepeatSeconds.TabIndex = 1;
+			this.textBoxRepeatSeconds.TabStop = false;
+			this.textBoxRepeatSeconds.ThousandsSeparator = true;
+			this.textBoxRepeatSeconds.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
 			// 
 			// SmtpClientDemo
 			// 
 			this.AcceptButton = this.buttonSend;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(555, 499);
+			this.ClientSize = new System.Drawing.Size(555, 533);
+			this.Controls.Add(this.groupBoxRepeat);
 			this.Controls.Add(this.buttonListServerCapabilities);
-			this.Controls.Add(this.buttonRepeatedSend);
-			this.Controls.Add(this.label12);
-			this.Controls.Add(this.txtRepeatSeconds);
 			this.Controls.Add(this.progressBar1);
 			this.Controls.Add(this.comboBoxSSL);
 			this.Controls.Add(this.buttonSend);
@@ -463,7 +522,10 @@
 			this.MinimumSize = new System.Drawing.Size(563, 526);
 			this.Name = "SmtpClientDemo";
 			this.Text = "MailKit SMTP Client Demo - WinForms";
-			((System.ComponentModel.ISupportInitialize)(this.txtRepeatSeconds)).EndInit();
+			this.groupBoxRepeat.ResumeLayout(false);
+			this.groupBoxRepeat.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.textBoxBatchSize)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.textBoxRepeatSeconds)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -501,10 +563,13 @@
 		private System.Windows.Forms.Button buttonSend;
 		private System.Windows.Forms.ComboBox comboBoxSSL;
 		private System.Windows.Forms.ProgressBar progressBar1;
-		private System.Windows.Forms.NumericUpDown txtRepeatSeconds;
-		private System.Windows.Forms.Label label12;
-		private System.Windows.Forms.Button buttonRepeatedSend;
 		private System.Windows.Forms.Button buttonListServerCapabilities;
+		private System.Windows.Forms.GroupBox groupBoxRepeat;
+		private System.Windows.Forms.Label label13;
+		private System.Windows.Forms.NumericUpDown textBoxBatchSize;
+		private System.Windows.Forms.Button buttonRepeatedSend;
+		private System.Windows.Forms.Label label12;
+		private System.Windows.Forms.NumericUpDown textBoxRepeatSeconds;
 	}
 }
 
