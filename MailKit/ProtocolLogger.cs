@@ -62,7 +62,8 @@ namespace MailKit {
 		/// <param name="fileName">The file name.</param>
 		public ProtocolLogger (string fileName)
 		{
-			stream = File.OpenWrite (fileName);
+			// stream = File.OpenWrite (fileName);
+			stream = File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read);
 		}
 #endif
 
