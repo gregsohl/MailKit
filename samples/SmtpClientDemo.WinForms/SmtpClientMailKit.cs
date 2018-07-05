@@ -15,13 +15,22 @@ using MimeKit;
 
 namespace SmtpClientDemo.WinForms
 {
-	public class SmtpClientMailKit
+	public class SmtpClientMailKit : IDisposable
 	{
 		#region Public Constructors
 
 		public SmtpClientMailKit()
 		{
 			m_Client = new SmtpClient();
+		}
+
+		public void Dispose()
+		{
+			if (m_Client != null)
+			{
+				m_Client.Dispose();
+				m_Client = null;
+			}
 		}
 
 		#endregion Public Constructors

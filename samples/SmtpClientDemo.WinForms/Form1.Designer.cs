@@ -65,9 +65,12 @@
 			this.buttonRepeatedSend = new System.Windows.Forms.Button();
 			this.label12 = new System.Windows.Forms.Label();
 			this.textBoxRepeatSeconds = new System.Windows.Forms.NumericUpDown();
+			this.trackBarLogSetting = new System.Windows.Forms.TrackBar();
+			this.label14 = new System.Windows.Forms.Label();
 			this.groupBoxRepeat.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.textBoxBatchSize)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.textBoxRepeatSeconds)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.trackBarLogSetting)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -481,12 +484,32 @@
             0,
             0});
 			// 
+			// trackBarLogSetting
+			// 
+			this.trackBarLogSetting.Location = new System.Drawing.Point(7, 344);
+			this.trackBarLogSetting.Maximum = 1;
+			this.trackBarLogSetting.Name = "trackBarLogSetting";
+			this.trackBarLogSetting.Size = new System.Drawing.Size(63, 42);
+			this.trackBarLogSetting.TabIndex = 39;
+			this.trackBarLogSetting.Scroll += new System.EventHandler(this.TrackBarLogSettingOnScroll);
+			// 
+			// label14
+			// 
+			this.label14.AutoSize = true;
+			this.label14.Location = new System.Drawing.Point(7, 375);
+			this.label14.Name = "label14";
+			this.label14.Size = new System.Drawing.Size(66, 13);
+			this.label14.TabIndex = 40;
+			this.label14.Text = "Screen - File";
+			// 
 			// SmtpClientDemo
 			// 
 			this.AcceptButton = this.buttonSend;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(555, 533);
+			this.Controls.Add(this.label14);
+			this.Controls.Add(this.trackBarLogSetting);
 			this.Controls.Add(this.groupBoxRepeat);
 			this.Controls.Add(this.buttonListServerCapabilities);
 			this.Controls.Add(this.progressBar1);
@@ -526,6 +549,7 @@
 			this.groupBoxRepeat.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.textBoxBatchSize)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.textBoxRepeatSeconds)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.trackBarLogSetting)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -570,6 +594,8 @@
 		private System.Windows.Forms.Button buttonRepeatedSend;
 		private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.NumericUpDown textBoxRepeatSeconds;
+		private System.Windows.Forms.TrackBar trackBarLogSetting;
+		private System.Windows.Forms.Label label14;
 	}
 }
 

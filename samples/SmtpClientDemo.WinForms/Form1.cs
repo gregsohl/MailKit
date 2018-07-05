@@ -3,10 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using MailKit;
 
 using MimeKit;
 using MailKit.Net.Smtp;
@@ -590,6 +593,7 @@ namespace SmtpClientDemo.WinForms
 
 					Task createClientTask = m_Client.Connect();
 					await createClientTask.ContinueWith(t => LoadAuthComboBoxValues());
+					m_Client.EndSend();
 				}
 			}
 			catch
@@ -615,6 +619,8 @@ namespace SmtpClientDemo.WinForms
 				string capabilities = ListCapabilities();
 
 				textBoxLog.Text += capabilities;
+
+				m_Client.EndSend();
 			}
 			catch
 			{
@@ -671,7 +677,7 @@ namespace SmtpClientDemo.WinForms
 			ReadDataFromControls();
 
 			m_RepeatStatus = new RepeatStatus();
-			m_RepeatStatus.StopClicked += StatusForm_StopClicked;
+			m_RepeatStatus.StopClicked += StatusFormOnStopClicked;
 			m_RepeatStatus.Show(this);
 
 			try
@@ -687,7 +693,7 @@ namespace SmtpClientDemo.WinForms
 			}
 		}
 
-		private void StatusForm_StopClicked(object sender, EventArgs e)
+		private void StatusFormOnStopClicked(object sender, EventArgs e)
 		{
 			m_Cancel = true;
 		}
@@ -744,5 +750,43 @@ namespace SmtpClientDemo.WinForms
 		}
 
 		#endregion Private Methods
+
+		private void TrackBarLogSettingOnScroll(object sender, EventArgs e)
+		{
+			if (trackBarLogSetting.Value == 0)
+			{
+				textBoxLog.Text = string.Empty;
+
+				if (m_Client.Logger != null)
+				{
+					m_Client.Logger.Dispose();
+				}
+
+				MemoryStream logStream = new MemoryStream();
+				m_Client.Logger = new ProtocolLogger(logStream);
+			}
+			else
+			{
+				using (SaveFileDialog dialog = new SaveFileDialog())
+				{
+					dialog.Title = "SMTP Log File";
+					dialog.Filter = "Log Files (*.log)|*.log|Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+					dialog.FilterIndex = 1;
+					dialog.OverwritePrompt = true;
+
+					if (dialog.ShowDialog(this) == DialogResult.OK)
+					{
+						textBoxLog.Text = "<log to file>";
+
+						if (m_Client.Logger != null)
+						{
+							m_Client.Logger.Dispose();
+						}
+
+						m_Client.Logger = new ProtocolLogger(dialog.FileName);
+					}
+				}
+			}
+		}
 	}
 }
