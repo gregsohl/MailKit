@@ -15,7 +15,7 @@ using MimeKit;
 
 namespace SmtpClientDemo.WinForms
 {
-	public class SmtpClientMailKit : IDisposable
+	public class SmtpClientMailKit : IDisposable, ISmtpClient
 	{
 		#region Public Constructors
 
@@ -155,7 +155,7 @@ namespace SmtpClientDemo.WinForms
 			m_MessagesInCurrentBatch = 0;
 		}
 
-		public void EndSend()
+		public void Disconnect()
 		{
 			if (m_Client != null)
 			{
@@ -164,7 +164,12 @@ namespace SmtpClientDemo.WinForms
 			}
 		}
 
-		public async Task<SendResult> TrySend(MimeMessage message)
+		public bool HasCapability(SmtpCapabilities capability)
+		{
+			return Capabilities.HasFlag(capability);
+		}
+
+		public async Task<SendResult> TrySend(System.Net.Mail.MailMessage message)
 		{
 			await Connect();
 			await Authenticate();
@@ -173,14 +178,16 @@ namespace SmtpClientDemo.WinForms
 
 			try
 			{
-				await m_Client.SendAsync(message);
+				MimeMessage mimeMessage = MimeMessage.CreateFromMailMessage(message);
+
+				await m_Client.SendAsync(mimeMessage);
 				result.Success = true;
 				m_MessagesInCurrentBatch++;
 
 				if ((BatchSize > 0) &&
 					(m_MessagesInCurrentBatch >= BatchSize))
 				{
-					EndSend();
+					Disconnect();
 				}
 			}
 			catch (Exception exception)

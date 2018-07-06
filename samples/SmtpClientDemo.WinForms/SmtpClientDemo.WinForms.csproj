@@ -52,6 +52,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="ISmtpClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepeatStatus.cs">
@@ -62,6 +63,8 @@
     </Compile>
     <Compile Include="SendResult.cs" />
     <Compile Include="SmtpClientMailKit.cs" />
+    <Compile Include="SmtpClientSystemNetMail.cs" />
+    <Compile Include="SmtpMessage.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

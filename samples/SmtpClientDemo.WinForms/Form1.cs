@@ -11,7 +11,6 @@ using System.Windows.Forms;
 
 using MailKit;
 
-using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 
@@ -30,7 +29,43 @@ namespace SmtpClientDemo.WinForms
 
 		#endregion Constructors
 
+		#region Protected Methods
+
+		protected override void OnLoad(
+			EventArgs e)
+		{
+			base.OnLoad(e);
+
+			m_Client = GetClient();
+			m_LogStream = new MemoryStream();
+			m_Client.Logger = new ProtocolLogger(m_LogStream);
+
+			LoadSslComboBoxValues();
+			LoadFormDefaultValuesFromConfig();
+		}
+
+		private ISmtpClient GetClient()
+		{
+			string clientType = ConfigurationManager.AppSettings[APP_SETTINGS_CLIENT_TYPE].ToUpper();
+
+			switch (clientType)
+			{
+				case APP_SETTINGS_CLIENT_TYPE_DOTNET:
+					return new SmtpClientSystemNetMail();
+
+				case APP_SETTINGS_CLIENT_TYPE_MAILKIT:
+				default:
+					return new SmtpClientMailKit();
+			}
+		}
+
+		#endregion Protected Methods
+
 		#region Private Constants
+
+		private const string APP_SETTINGS_CLIENT_TYPE = "clientType";
+		private const string APP_SETTINGS_CLIENT_TYPE_DOTNET = "DOTNET";
+		private const string APP_SETTINGS_CLIENT_TYPE_MAILKIT = "MAILKIT";
 
 		private const string APP_SETTINGS_FROM = "from";
 		private const string APP_SETTINGS_TO = "to";
@@ -74,21 +109,12 @@ namespace SmtpClientDemo.WinForms
 		private bool m_Cancel;
 		private RepeatStatus m_RepeatStatus;
 
-		private SmtpClientMailKit m_Client;
+		private ISmtpClient m_Client;
+		private MemoryStream m_LogStream;
 
 		#endregion Private Fields
 
 		#region Private Methods
-
-		protected override void OnLoad(EventArgs e)
-		{
-			base.OnLoad(e);
-
-			m_Client = new SmtpClientMailKit();
-
-			LoadSslComboBoxValues();
-			LoadFormDefaultValuesFromConfig();
-		}
 
 		private async void LoadFormDefaultValuesFromConfig()
 		{
@@ -166,7 +192,7 @@ namespace SmtpClientDemo.WinForms
 
 			if (m_Client.IsConnected)
 			{
-				if (m_Client.Capabilities.HasFlag(SmtpCapabilities.Authentication))
+				if (m_Client.HasCapability(SmtpCapabilities.Authentication))
 				{
 					if (m_Client.AuthenticationMechanisms.Count > 0)
 					{
@@ -188,7 +214,6 @@ namespace SmtpClientDemo.WinForms
 			comboBoxAuth.DataSource = new BindingSource(authComboBoxData, null);
 			comboBoxAuth.SelectedIndex = initialIndex;
 		}
-
 
 		private void LoadSslComboBoxValues()
 		{
@@ -261,11 +286,12 @@ namespace SmtpClientDemo.WinForms
 
 			try
 			{
-				MimeMessage message = CreateMessage();
+				// MimeMessage message = CreateMessage();
+				System.Net.Mail.MailMessage message = CreateMessage();
 
 				var sendEmailTask = m_Client.TrySend(message);
 				await sendEmailTask;
-				m_Client.EndSend();
+				m_Client.Disconnect();
 
 				if (sendEmailTask.Result.Success)
 				{
@@ -297,139 +323,10 @@ namespace SmtpClientDemo.WinForms
 			}
 		}
 
-		//private async Task<SendResult> TrySendEmail(
-		//	MimeMessage message,
-		//	SmtpClient client)
-		//{
-		//	SendResult result = new SendResult();
-
-		//	try
-		//	{
-		//		await client.SendAsync(message);
-		//		result.Success = true;
-
-		//	}
-		//	catch (Exception exception)
-		//	{
-		//		result.Exception = exception;
-		//		result.Success = false;
-		//	}
-
-		//	//finally
-		//	//{
-		//	//	logStream.Position = 0;
-
-		//	//	using (StreamReader logStreamReader = new StreamReader(logStream, Encoding.UTF8, true, 8192, true))
-		//	//	{
-		//	//		textBoxLog.Text = logStreamReader.ReadToEnd();
-		//	//	}
-		//	//}
-
-		//	return result;
-		//}
-
-		//private async Task<SendResult> TrySendEmail(
-		//	MimeMessage message)
-		//{
-		//	SendResult result = new SendResult();
-		//	SmtpClient client = null;
-
-		//	// MemoryStream disposed by ProtocolLogger
-		//	MemoryStream logStream = new MemoryStream();
-
-		//	using (ProtocolLogger logger = new ProtocolLogger(logStream))
-		//	{
-		//		try
-		//		{
-		//			client = await ConnectToSmtpServer(GetServer(), GetPortNumber(), GetSecureSocketOption(), logger);
-
-		//			await AuthenticateToSmtpServer(client, GetAuthenticationMethod(), GetUserName(), GetPassword());
-
-		//			await client.SendAsync(message);
-		//			result.Success = true;
-		//		}
-		//		catch (Exception ex)
-		//		{
-		//			result.Exception = ex;
-		//			result.Success = false;
-		//		}
-		//		finally
-		//		{
-		//			logStream.Position = 0;
-
-		//			using (StreamReader logStreamReader = new StreamReader(logStream, Encoding.UTF8, true, 8192, true))
-		//			{
-		//				textBoxLog.Text = logStreamReader.ReadToEnd();
-		//			}
-
-		//			if (client != null)
-		//			{
-		//				if (client.IsConnected)
-		//				{
-		//					client.Disconnect(true);
-		//				}
-
-		//				client.Dispose();
-		//			}
-		//		}
-		//	}
-
-		//	return result;
-		//}
-
-		//private async Task AuthenticateToSmtpServer(SmtpClient client,
-		//	string authenticationMethod,
-		//	string userName,
-		//	string password)
-		//{
-		//	if (authenticationMethod != NONE)
-		//	{
-		//		var credentials = new NetworkCredential(userName, password);
-
-		//		if (authenticationMethod != AUTO)
-		//		{
-		//			// Manually create an SaslMechanism with the selected authentication mechanism. 
-		//			// NTLM is not supported for auto select.
-		//			var saslMechanism = SaslMechanism.Create(authenticationMethod, new Uri("smtp://localhost"), credentials);
-
-		//			// client.Authenticate(saslMechanism);
-		//			await client.AuthenticateAsync(saslMechanism);
-		//		}
-		//		else
-		//		{
-		//			// client.Authenticate(credentials);
-		//			await client.AuthenticateAsync(credentials);
-		//		}
-		//	}
-		//}
-
 		private void ButtonCloseOnClick(object sender, EventArgs e)
 		{
 			Application.Exit();
 		}
-
-		//private async Task<SmtpClient> ConnectToSmtpServer(
-		//	string server,
-		//	int portNumber,
-		//	SecureSocketOptions secureSocketOption,
-		//	ProtocolLogger logger = null)
-		//{
-		//	SmtpClient client = logger == null ? new SmtpClient() : new SmtpClient(logger);
-
-		//	if (string.IsNullOrWhiteSpace(server))
-		//	{
-		//		throw new ArgumentNullException("Server", "Parameter Server should be specified");
-		//	}
-
-		//	if (string.IsNullOrWhiteSpace(textBoxPort.Text))
-		//	{
-		//		throw new ArgumentNullException("Port", "Parameter Port should be specified");
-		//	}
-
-		//	await client.ConnectAsync(server, portNumber, secureSocketOption);
-
-		//	return client;
-		//}
 
 		private string GetAuthenticationMethod()
 		{
@@ -439,11 +336,6 @@ namespace SmtpClientDemo.WinForms
 			}
 
 			return (string)comboBoxAuth.SelectedValue;
-		}
-
-		private string GetPassword()
-		{
-			return GetInputField(textBoxPassword);
 		}
 
 		private int GetPortNumber()
@@ -479,16 +371,6 @@ namespace SmtpClientDemo.WinForms
 			return secureSocketOptions;
 		}
 
-		private string GetServer()
-		{
-			return GetInputField(textBoxServer);
-		}
-
-		private string GetUserName()
-		{
-			return GetInputField(textBoxUser);
-		}
-
 		private string GetInputField(TextBox inputField)
 		{
 			if (InvokeRequired)
@@ -501,12 +383,12 @@ namespace SmtpClientDemo.WinForms
 
 		private void ReadDataFromControls()
 		{
-			m_Server = GetServer();
+			m_Server = GetInputField(textBoxServer);
 			m_Port = GetPortNumber();
 			m_SecureSocketOptions = GetSecureSocketOption();
 
-			m_User = GetUserName();
-			m_Password = GetPassword();
+			m_User = GetInputField(textBoxUser);
+			m_Password = GetInputField(textBoxPassword);
 			m_AuthorizationMechanism = GetAuthenticationMethod();
 
 			m_From = GetInputField(textBoxFrom);
@@ -525,40 +407,43 @@ namespace SmtpClientDemo.WinForms
 			m_Client.Authentication = m_AuthorizationMechanism;
 		}
 
-		private MimeMessage CreateMessage(string messageSuffix = "")
+		private System.Net.Mail.MailMessage CreateMessage(string messageSuffix = "")
 		{
-			MimeMessage message = new MimeMessage();
+			//MimeMessage message = new MimeMessage();
 
 			if (string.IsNullOrWhiteSpace(m_From))
 			{
 				throw new ArgumentNullException("From", "Parameter From should be specified");
 			}
 
-			message.From.Add(new MailboxAddress(m_From));
+			// message.From.Add(new MailboxAddress(m_From));
 
 			if (string.IsNullOrWhiteSpace(m_To))
 			{
 				throw new ArgumentNullException("To", "Parameter To should be specified");
 			}
 
-			message.To.Add(new MailboxAddress(m_To));
+			// message.To.Add(new MailboxAddress(m_To));
+			System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage(m_From, m_To, m_Subject, m_MessageBody + messageSuffix);
 
 			if (!string.IsNullOrWhiteSpace(m_Cc))
 			{
-				message.Cc.Add(new MailboxAddress(m_Cc));
+				//message.Cc.Add(new MailboxAddress(m_Cc));
+				message.CC.Add(new System.Net.Mail.MailAddress(m_Cc));
 			}
 
 			if (!string.IsNullOrWhiteSpace(m_Bcc))
 			{
-				message.Bcc.Add(new MailboxAddress(m_Bcc));
+				// message.Bcc.Add(new MailboxAddress(m_Bcc));
+				message.Bcc.Add(new System.Net.Mail.MailAddress(m_Bcc));
 			}
 
-			message.Subject = m_Subject;
+			//message.Subject = m_Subject;
 
-			message.Body = new TextPart("plain")
-			{
-				Text = m_MessageBody + messageSuffix
-			};
+			//message.Body = new TextPart("plain")
+			//{
+			//	Text = m_MessageBody + messageSuffix
+			//};
 
 			return message;
 		}
@@ -593,7 +478,7 @@ namespace SmtpClientDemo.WinForms
 
 					Task createClientTask = m_Client.Connect();
 					await createClientTask.ContinueWith(t => LoadAuthComboBoxValues());
-					m_Client.EndSend();
+					m_Client.Disconnect();
 				}
 			}
 			catch
@@ -620,7 +505,7 @@ namespace SmtpClientDemo.WinForms
 
 				textBoxLog.Text += capabilities;
 
-				m_Client.EndSend();
+				m_Client.Disconnect();
 			}
 			catch
 			{
@@ -713,7 +598,8 @@ namespace SmtpClientDemo.WinForms
 
 				while (!m_Cancel)
 				{
-					MimeMessage message = CreateMessage(" #" + (countTotal + 1));
+					// MimeMessage message = CreateMessage(" #" + (countTotal + 1));
+					System.Net.Mail.MailMessage message = CreateMessage(" #" + (countTotal + 1));
 
 					SendResult sendResult = await m_Client.TrySend(message);
 
@@ -731,7 +617,7 @@ namespace SmtpClientDemo.WinForms
 			}
 			finally
 			{
-				m_Client.EndSend();
+				m_Client.Disconnect();
 			}
 
 			return true;
@@ -739,17 +625,16 @@ namespace SmtpClientDemo.WinForms
 
 		private void Sleep(int sleepSeconds)
 		{
-			for (int count = 0; count < sleepSeconds; count++)
+			// Do the sleep in small chunks to support quicker cancellation.
+			for (int count = 0; count < sleepSeconds * 2; count++)
 			{
-				Thread.Sleep(1000);
+				Thread.Sleep(500);
 				if (m_Cancel)
 				{
 					break;
 				}
 			}
 		}
-
-		#endregion Private Methods
 
 		private void TrackBarLogSettingOnScroll(object sender, EventArgs e)
 		{
@@ -762,8 +647,8 @@ namespace SmtpClientDemo.WinForms
 					m_Client.Logger.Dispose();
 				}
 
-				MemoryStream logStream = new MemoryStream();
-				m_Client.Logger = new ProtocolLogger(logStream);
+				m_LogStream = new MemoryStream();
+				m_Client.Logger = new ProtocolLogger(m_LogStream);
 			}
 			else
 			{
@@ -788,5 +673,7 @@ namespace SmtpClientDemo.WinForms
 				}
 			}
 		}
+
+		#endregion Private Methods
 	}
 }
