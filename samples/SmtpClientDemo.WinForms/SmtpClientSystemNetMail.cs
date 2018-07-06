@@ -2,8 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 using System.Threading.Tasks;
 
 using MailKit;
@@ -30,6 +32,7 @@ namespace SmtpClientDemo.WinForms
 		public SmtpClientSystemNetMail()
 		{
 			m_Dirty = true;
+			m_Logger = new SmtpLogger(new NullProtocolLogger());
 		}
 
 		private void CreateClient()
@@ -62,6 +65,8 @@ namespace SmtpClientDemo.WinForms
 				m_Client.Credentials = new NetworkCredential(User, Password);
 			}
 
+			Log("CREATE");
+
 			m_Dirty = false;
 		}
 
@@ -92,7 +97,15 @@ namespace SmtpClientDemo.WinForms
 			get { return true; }
 		}
 
-		public ProtocolLogger Logger { get; set; }
+		public ProtocolLogger Logger
+		{
+			get { return m_ProtocolLogger; }
+			set
+			{
+				m_ProtocolLogger = value;
+				m_Logger = new SmtpLogger(m_ProtocolLogger);
+			}
+		}
 
 		public uint MaxSize { get; }
 
@@ -198,7 +211,10 @@ namespace SmtpClientDemo.WinForms
 
 			try
 			{
+				Log("SEND");
+
 				await Task.Run(() => m_Client.Send(message));
+
 				result.Success = true;
 			}
 			catch (Exception exception)
@@ -210,21 +226,34 @@ namespace SmtpClientDemo.WinForms
 			return result;
 		}
 
+		private void Log(string prefix)
+		{
+			m_Logger.Log("{0}: Server: {1}", prefix, m_Client.Host);
+			m_Logger.Log("{0}: Port: {1}", prefix, m_Client.Port);
+			m_Logger.Log("{0}: SSL: {1}", prefix, m_Client.EnableSsl);
+
+			NetworkCredential networkCredential = m_Client.Credentials as NetworkCredential;
+			if (networkCredential != null)
+			{
+				m_Logger.Log("{0}: User: {1}", prefix, networkCredential.UserName);
+				m_Logger.Log(
+					"{0}: Password: {1}",
+					prefix,
+					networkCredential.Password.Substring(0, 2) +
+					"*****" +
+					networkCredential.Password.Substring(Math.Max(networkCredential.Password.Length - 2, 0), 2));
+			}
+		}
+
 		#endregion Public Methods
 
 		#region Private Constants
 
 		private const string AUTO = "Auto";
-
-		private const int DEFAULT_TIMEOUT = 30000;
 		private const string NONE = "None";
 
-		// 5 seconds
-
-		#endregion Private Constants
-
-		#region Private Fields
-
+		private const int DEFAULT_TIMEOUT = 30000;  // 5 seconds
+		
 		private static readonly HashSet<string> m_AuthenticationMechanisms = new HashSet<string>
 		{
 			NONE,
@@ -238,16 +267,44 @@ namespace SmtpClientDemo.WinForms
 			"NTLM"
 		};
 
+		#endregion Private Constants
+
+		#region Private Fields
+
 		private System.Net.Mail.SmtpClient m_Client;
+
 		private string m_Server;
 		private int m_Port;
+		private SecureSocketOptions m_SecureSocketOption;
 		private string m_Password;
 		private string m_User;
 
 		private bool m_Dirty;
-		private SecureSocketOptions m_SecureSocketOption;
+
+		private SmtpLogger m_Logger;
+		private ProtocolLogger m_ProtocolLogger;
 
 		#endregion Private Fields
+	}
 
+	public class SmtpLogger
+	{
+		public SmtpLogger(IProtocolLogger logger)
+		{
+			Logger = logger;
+		}
+
+		public IProtocolLogger Logger
+		{
+			[DebuggerStepThrough]
+			get;
+		}
+
+		public void Log(string message, params object[] args)
+		{
+			var buffer = Encoding.UTF8.GetBytes(string.Format(message, args) + "\r\n");
+
+			Logger.LogClient(buffer, 0, buffer.Length);
+		}
 	}
 }

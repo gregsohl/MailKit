@@ -312,6 +312,7 @@
 			this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
 			this.textBoxLog.Size = new System.Drawing.Size(459, 89);
 			this.textBoxLog.TabIndex = 14;
+			this.textBoxLog.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TextBoxLogOnMouseDoubleClick);
 			// 
 			// label7
 			// 

@@ -37,6 +37,13 @@ namespace SmtpClientDemo.WinForms
 			base.OnLoad(e);
 
 			m_Client = GetClient();
+
+			if (m_Client is SmtpClientSystemNetMail)
+			{
+				Text = ".NET SMTP Client Demo - WinForms";
+				buttonListServerCapabilities.Enabled = false;
+			}
+
 			m_LogStream = new MemoryStream();
 			m_Client.Logger = new ProtocolLogger(m_LogStream);
 
@@ -292,6 +299,21 @@ namespace SmtpClientDemo.WinForms
 				var sendEmailTask = m_Client.TrySend(message);
 				await sendEmailTask;
 				m_Client.Disconnect();
+
+				// If logging to on-screen, grab the buffer and put it in the log text box
+				if (m_LogStream != null)
+				{
+					m_LogStream.Position = 0;
+
+					using (StreamReader logStreamReader = new StreamReader(m_LogStream, Encoding.UTF8, true, 8192, true))
+					{
+						textBoxLog.Text = logStreamReader.ReadToEnd();
+						textBoxLog.SelectionStart = textBoxLog.TextLength;
+						textBoxLog.ScrollToCaret();
+					}
+
+					m_LogStream.Position = m_LogStream.Length;
+				}
 
 				if (sendEmailTask.Result.Success)
 				{
@@ -657,15 +679,16 @@ namespace SmtpClientDemo.WinForms
 					dialog.Title = "SMTP Log File";
 					dialog.Filter = "Log Files (*.log)|*.log|Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
 					dialog.FilterIndex = 1;
-					dialog.OverwritePrompt = true;
+					dialog.OverwritePrompt = false;
 
 					if (dialog.ShowDialog(this) == DialogResult.OK)
 					{
-						textBoxLog.Text = "<log to file>";
+						textBoxLog.Text = "< log to file: " + dialog.FileName + " >";
 
 						if (m_Client.Logger != null)
 						{
 							m_Client.Logger.Dispose();
+							m_LogStream = null;
 						}
 
 						m_Client.Logger = new ProtocolLogger(dialog.FileName);
@@ -674,6 +697,17 @@ namespace SmtpClientDemo.WinForms
 			}
 		}
 
+		private void TextBoxLogOnMouseDoubleClick(object sender, MouseEventArgs e)
+		{
+			if (m_LogStream != null)
+			{
+				m_LogStream = new MemoryStream();
+				m_Client.Logger = new ProtocolLogger(m_LogStream);
+				textBoxLog.Clear();
+			}
+		}
+
 		#endregion Private Methods
+
 	}
 }
