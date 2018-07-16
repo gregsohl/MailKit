@@ -67,6 +67,7 @@
 			this.textBoxRepeatSeconds = new System.Windows.Forms.NumericUpDown();
 			this.trackBarLogSetting = new System.Windows.Forms.TrackBar();
 			this.label14 = new System.Windows.Forms.Label();
+			this.buttonSavePassword = new System.Windows.Forms.Button();
 			this.groupBoxRepeat.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.textBoxBatchSize)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.textBoxRepeatSeconds)).BeginInit();
@@ -273,7 +274,7 @@
 			this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBoxPassword.Location = new System.Drawing.Point(388, 287);
 			this.textBoxPassword.Name = "textBoxPassword";
-			this.textBoxPassword.Size = new System.Drawing.Size(147, 20);
+			this.textBoxPassword.Size = new System.Drawing.Size(121, 20);
 			this.textBoxPassword.TabIndex = 11;
 			this.textBoxPassword.UseSystemPasswordChar = true;
 			// 
@@ -503,12 +504,25 @@
 			this.label14.TabIndex = 40;
 			this.label14.Text = "Screen - File";
 			// 
+			// buttonSavePassword
+			// 
+			this.buttonSavePassword.Image = global::SmtpClientDemo.WinForms.Properties.Resources.save16x16;
+			this.buttonSavePassword.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
+			this.buttonSavePassword.Location = new System.Drawing.Point(514, 286);
+			this.buttonSavePassword.Name = "buttonSavePassword";
+			this.buttonSavePassword.Size = new System.Drawing.Size(21, 22);
+			this.buttonSavePassword.TabIndex = 41;
+			this.buttonSavePassword.TabStop = false;
+			this.buttonSavePassword.UseVisualStyleBackColor = true;
+			this.buttonSavePassword.Click += new System.EventHandler(this.ButtonSavePasswordOnClick);
+			// 
 			// SmtpClientDemo
 			// 
 			this.AcceptButton = this.buttonSend;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(555, 533);
+			this.Controls.Add(this.buttonSavePassword);
 			this.Controls.Add(this.label14);
 			this.Controls.Add(this.trackBarLogSetting);
 			this.Controls.Add(this.groupBoxRepeat);
@@ -597,6 +611,7 @@
 		private System.Windows.Forms.NumericUpDown textBoxRepeatSeconds;
 		private System.Windows.Forms.TrackBar trackBarLogSetting;
 		private System.Windows.Forms.Label label14;
+		private System.Windows.Forms.Button buttonSavePassword;
 	}
 }
 

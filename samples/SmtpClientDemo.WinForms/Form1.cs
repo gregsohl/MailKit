@@ -171,7 +171,9 @@ namespace SmtpClientDemo.WinForms
 			m_User = ConfigurationManager.AppSettings[APP_SETTINGS_USER];
 			textBoxUser.Text = m_User;
 
-			m_Password = ConfigurationManager.AppSettings[APP_SETTINGS_PASSWORD];
+			string password = ConfigurationManager.AppSettings[APP_SETTINGS_PASSWORD];
+			m_Password = Encryption.DpapiDecrypt(password);
+
 			textBoxPassword.Text = m_Password;
 
 			await UpdateAuthComboBoxValues();
@@ -707,6 +709,34 @@ namespace SmtpClientDemo.WinForms
 			}
 		}
 
+		private void ButtonSavePasswordOnClick(object sender, EventArgs e)
+		{
+			string encryptedPassword = Encryption.DpapiEncrypt(textBoxPassword.Text);
+			AddOrUpdateAppSettings("Password", encryptedPassword);
+		}
+
+		public static void AddOrUpdateAppSettings(string key, string value)
+		{
+			try
+			{
+				var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+				var settings = configFile.AppSettings.Settings;
+				if (settings[key] == null)
+				{
+					settings.Add(key, value);
+				}
+				else
+				{
+					settings[key].Value = value;
+				}
+				configFile.Save(ConfigurationSaveMode.Modified);
+				ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+			}
+			catch (ConfigurationErrorsException)
+			{
+				Console.WriteLine("Error writing app settings");
+			}
+		}
 		#endregion Private Methods
 
 	}
