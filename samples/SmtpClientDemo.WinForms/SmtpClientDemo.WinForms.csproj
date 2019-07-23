@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -104,17 +104,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MailKit\MailKit.Net45.csproj">
-      <Project>{7264d469-a390-4c10-9c87-daa37edd3c1d}</Project>
-      <Name>MailKit.Net45</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\submodules\MimeKit\MimeKit\MimeKit.Net45.csproj">
-      <Project>{d5f54a4f-d84b-430f-9271-f7861e285b3e}</Project>
-      <Name>MimeKit.Net45</Name>
-    </ProjectReference>
+    <None Include="Resources\save16x16.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\save16x16.png" />
+    <PackageReference Include="MailKit">
+      <Version>2.0.6</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

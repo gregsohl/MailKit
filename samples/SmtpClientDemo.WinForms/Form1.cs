@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Net.Security;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,6 +45,7 @@ namespace SmtpClientDemo.WinForms
 			{
 				Text = ".NET SMTP Client Demo - WinForms";
 				buttonListServerCapabilities.Enabled = false;
+				buttonCertificateTest.Enabled = false;
 			}
 
 			m_LogStream = new MemoryStream();
@@ -62,7 +66,7 @@ namespace SmtpClientDemo.WinForms
 
 				case APP_SETTINGS_CLIENT_TYPE_MAILKIT:
 				default:
-					return new SmtpClientMailKit();
+					return new SmtpClientMailKit(ServerCertificateValidationCallback);
 			}
 		}
 
@@ -91,8 +95,8 @@ namespace SmtpClientDemo.WinForms
 		private const string AUTO = "Auto";
 
 		private const string SECURE_SOCKET_OPTION_SSL_ON_CONNECT = "SSL on Connect";
-		private const string SECURE_SOCKET_OPTION_START_TLS = "Start TLS";
-		private const string SECURE_SOCKET_OPTION_START_TLS_WHEN_AVAILABLE = "Start TLS when available";
+		private const string SECURE_SOCKET_OPTION_START_TLS = "StartTLS";
+		private const string SECURE_SOCKET_OPTION_START_TLS_WHEN_AVAILABLE = "StartTLS when available";
 
 		#endregion Private Constants
 
@@ -117,7 +121,7 @@ namespace SmtpClientDemo.WinForms
 		private RepeatStatus m_RepeatStatus;
 
 		private ISmtpClient m_Client;
-		private MemoryStream m_LogStream;
+		private Stream m_LogStream;
 
 		#endregion Private Fields
 
@@ -150,17 +154,18 @@ namespace SmtpClientDemo.WinForms
 			textBoxPort.Text = port;
 			Int32.TryParse(port, out m_Port);
 
-			string ssl = ConfigurationManager.AppSettings[APP_SETTINGS_SSL];
+			string sslConfiguration = ConfigurationManager.AppSettings[APP_SETTINGS_SSL];
 
-			if (!string.IsNullOrEmpty(ssl))
+			if (!string.IsNullOrEmpty(sslConfiguration))
 			{
 				SecureSocketOptions valueToSelect = SecureSocketOptions.Auto;
+				comboBoxSSL.SelectedValue = valueToSelect;
 
 				foreach (KeyValuePair<string, SecureSocketOptions> item in comboBoxSSL.Items)
 				{
-					if (item.Key == ssl)
+					if (item.Value.ToString() == sslConfiguration)
 					{
-						comboBoxSSL.SelectedValue = valueToSelect;
+						comboBoxSSL.SelectedValue = item.Value;
 						break;
 					}
 				}
@@ -281,6 +286,11 @@ namespace SmtpClientDemo.WinForms
 			textBoxPassword.Visible = show;
 		}
 
+		private void ButtonClearLogOnClick(object sender, EventArgs e)
+		{
+			textBoxLog.Clear();
+		}
+
 		private void ButtonCopyOnClick(object sender, EventArgs e)
 		{
 			Clipboard.SetText(textBoxLog.Text);
@@ -298,24 +308,13 @@ namespace SmtpClientDemo.WinForms
 				// MimeMessage message = CreateMessage();
 				System.Net.Mail.MailMessage message = CreateMessage();
 
+				LogMessage($"{DateTime.Now} - BEGIN SEND");
+
 				var sendEmailTask = m_Client.TrySend(message);
 				await sendEmailTask;
 				m_Client.Disconnect();
 
-				// If logging to on-screen, grab the buffer and put it in the log text box
-				if (m_LogStream != null)
-				{
-					m_LogStream.Position = 0;
-
-					using (StreamReader logStreamReader = new StreamReader(m_LogStream, Encoding.UTF8, true, 8192, true))
-					{
-						textBoxLog.Text = logStreamReader.ReadToEnd();
-						textBoxLog.SelectionStart = textBoxLog.TextLength;
-						textBoxLog.ScrollToCaret();
-					}
-
-					m_LogStream.Position = m_LogStream.Length;
-				}
+				PutLogInTextbox();
 
 				if (sendEmailTask.Result.Success)
 				{
@@ -341,8 +340,13 @@ namespace SmtpClientDemo.WinForms
 					MessageBox.Show(resultMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
 			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("A failure occurred sending the message.\r\n\r\n" + ex.Message);
+			}
 			finally
 			{
+				LogMessage($"{DateTime.Now} - END SEND");
 				UpdateFormState(true);
 			}
 		}
@@ -669,6 +673,7 @@ namespace SmtpClientDemo.WinForms
 				if (m_Client.Logger != null)
 				{
 					m_Client.Logger.Dispose();
+					m_LogStream = null;
 				}
 
 				m_LogStream = new MemoryStream();
@@ -693,7 +698,13 @@ namespace SmtpClientDemo.WinForms
 							m_LogStream = null;
 						}
 
-						m_Client.Logger = new ProtocolLogger(dialog.FileName);
+						m_LogStream = File.Open(dialog.FileName, FileMode.Append, FileAccess.Write, FileShare.Read);
+						m_Client.Logger = new ProtocolLogger(m_LogStream);
+					}
+					else
+					{
+						// User didn't specify a log file. Set logging back to screen.
+						trackBarLogSetting.Value = 0;
 					}
 				}
 			}
@@ -706,6 +717,14 @@ namespace SmtpClientDemo.WinForms
 				m_LogStream = new MemoryStream();
 				m_Client.Logger = new ProtocolLogger(m_LogStream);
 				textBoxLog.Clear();
+			}
+		}
+
+		private void TextBoxLogKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Control && e.KeyCode == Keys.A)
+			{
+				textBoxLog.SelectAll();
 			}
 		}
 
@@ -737,6 +756,171 @@ namespace SmtpClientDemo.WinForms
 				Console.WriteLine("Error writing app settings");
 			}
 		}
+
+		private async void ButtonCertificateTestOnClick(object sender, EventArgs e)
+		{
+			UpdateFormState(false);
+			ReadDataFromControls();
+
+			try
+			{
+				LogMessage($"{DateTime.Now} - BEGIN CERTIFICATE TEST");
+
+				var connectTask = m_Client.Connect();
+
+				await connectTask;
+
+				m_Client.Disconnect();
+
+				PutLogInTextbox();
+			}
+			catch (SslHandshakeException exception)
+			{
+				LogMessage(exception.Message);
+				if (exception.InnerException != null)
+				{
+					LogMessage(exception.InnerException.Message);
+				}
+			}
+			finally
+			{
+				LogMessage($"{DateTime.Now} - END CERTIFICATE TEST");
+				UpdateFormState(true);
+			}
+		}
+
+		private bool ServerCertificateValidationCallback(
+			object sender,
+			X509Certificate certificate,
+			X509Chain chain,
+			SslPolicyErrors sslpolicyerrors)
+		{
+			if ((checkBoxDisplayCertificate.Checked) &&
+				(certificate is X509Certificate2))
+			{
+				X509Certificate2UI.DisplayCertificate((X509Certificate2) certificate);
+			}
+
+			if (checkBoxLogCertificates.Checked)
+			{
+				int index = 0;
+				foreach (X509ChainElement chainElement in chain.ChainElements)
+				{
+					index++;
+					DumpCertificate(chainElement.Certificate, $"Certificate {index}");
+				}
+			}
+
+			if (sslpolicyerrors != SslPolicyErrors.None)
+			{
+				LogMessage("Certificate has Errors: " + sslpolicyerrors);
+			}
+
+			LogMessage();
+
+			return true;
+		}
+
+		private void DumpCertificate(
+			X509Certificate2 certificate,
+			string label)
+		{
+			using (StreamWriter streamWriter = GetLogStreamWriter())
+			{
+				streamWriter.WriteLine();
+				streamWriter.WriteLine("Certificate Chain Index '{0}'", label);
+				streamWriter.WriteLine("Friendly Name: {0}", certificate.FriendlyName);
+				streamWriter.WriteLine("Issued To: {0}", certificate.GetNameInfo(X509NameType.SimpleName, false));
+				streamWriter.WriteLine("Subject: {0}", certificate.SubjectName);
+				streamWriter.WriteLine("Serial number: {0}", certificate.SerialNumber);
+				streamWriter.WriteLine("Thumbprint: {0}", certificate.Thumbprint);
+				streamWriter.WriteLine("Issuer: {0}", certificate.IssuerName.Name);
+				streamWriter.WriteLine("Valid from: {0:d}", certificate.NotBefore);
+				streamWriter.WriteLine("Valid to: {0:d}", certificate.NotAfter);
+				streamWriter.WriteLine("Extensions");
+
+				foreach (X509Extension extension in certificate.Extensions)
+				{
+					streamWriter.WriteLine("\t" + extension.Oid.FriendlyName + "(" + extension.Oid.Value + "):");
+
+					if (extension.Oid.FriendlyName == "Key Usage")
+					{
+						X509KeyUsageExtension ext = (X509KeyUsageExtension) extension;
+						streamWriter.WriteLine("\t\tKey Usage: {0}", ext.KeyUsages);
+					}
+
+					if (extension.Oid.FriendlyName == "Basic Constraints")
+					{
+						X509BasicConstraintsExtension ext = (X509BasicConstraintsExtension) extension;
+						streamWriter.WriteLine(
+							"\t\tBasic Constraints - CertificateAuthority: {0}",
+							ext.CertificateAuthority);
+						streamWriter.WriteLine(
+							"\t\tBasic Constraints - HasPathLengthConstraint: {0}",
+							ext.HasPathLengthConstraint);
+						streamWriter.WriteLine(
+							"\t\tBasic Constraints - PathLengthConstraint: {0}",
+							ext.PathLengthConstraint);
+					}
+
+					if (extension.Oid.FriendlyName == "Subject Key Identifier")
+					{
+						X509SubjectKeyIdentifierExtension ext = (X509SubjectKeyIdentifierExtension) extension;
+						streamWriter.WriteLine("\t\tSubject Key Identifier: {0}", ext.SubjectKeyIdentifier);
+					}
+
+					if (extension.Oid.FriendlyName == "Enhanced Key Usage")
+					{
+						X509EnhancedKeyUsageExtension ext = (X509EnhancedKeyUsageExtension) extension;
+						OidCollection oids = ext.EnhancedKeyUsages;
+
+						foreach (Oid oid in oids)
+						{
+							streamWriter.WriteLine("\t\tEnhanced Key Usage: {0}", oid.FriendlyName + "(" + oid.Value + ")");
+						}
+					}
+				}
+			}
+		}
+
+		private void LogMessage(string message = "")
+		{
+			using (StreamWriter streamWriter = GetLogStreamWriter())
+			{
+				streamWriter.WriteLine(message);
+			}
+		}
+
+		private StreamWriter GetLogStreamWriter()
+		{
+			StreamWriter streamWriter = new StreamWriter(m_LogStream, Encoding.UTF8, 1024, true);
+			return streamWriter;
+		}
+
+		private void PutLogInTextbox()
+		{
+			// If logging to on-screen, grab the buffer and put it in the log text box
+			if ((trackBarLogSetting.Value == 0) &&
+				(m_LogStream != null))
+			{
+				m_LogStream.Position = 0;
+
+				using (StreamReader logStreamReader = new StreamReader(
+					m_LogStream,
+					Encoding.UTF8,
+					true,
+					8192,
+					true))
+				{
+					textBoxLog.Text = logStreamReader.ReadToEnd();
+					textBoxLog.SelectionStart = textBoxLog.TextLength;
+					textBoxLog.ScrollToCaret();
+				}
+
+				m_LogStream.Position = m_LogStream.Length;
+			}
+		}
+
 		#endregion Private Methods
 
 	}

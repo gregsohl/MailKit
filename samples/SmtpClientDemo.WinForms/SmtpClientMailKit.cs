@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Security;
 using System.Threading.Tasks;
 
 using MailKit;
@@ -17,11 +18,18 @@ namespace SmtpClientDemo.WinForms
 {
 	public class SmtpClientMailKit : IDisposable, ISmtpClient
 	{
+		private readonly RemoteCertificateValidationCallback m_RemoteCertificateValidationCallback;
+
 		#region Public Constructors
 
-		public SmtpClientMailKit()
+		public SmtpClientMailKit(RemoteCertificateValidationCallback remoteCertificateValidationCallback)
 		{
-			m_Client = new SmtpClient();
+			m_RemoteCertificateValidationCallback = remoteCertificateValidationCallback;
+
+			m_Client = new SmtpClient
+			{
+				ServerCertificateValidationCallback = remoteCertificateValidationCallback
+			};
 		}
 
 		public void Dispose()
@@ -138,6 +146,7 @@ namespace SmtpClientDemo.WinForms
 			}
 
 			m_Client = (Logger == null) ? new SmtpClient() : new SmtpClient(Logger);
+			m_Client.ServerCertificateValidationCallback = m_RemoteCertificateValidationCallback;
 
 			if (string.IsNullOrWhiteSpace(Server))
 			{
