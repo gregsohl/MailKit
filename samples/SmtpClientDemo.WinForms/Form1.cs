@@ -803,12 +803,24 @@ namespace SmtpClientDemo.WinForms
 
 			if (checkBoxLogCertificates.Checked)
 			{
+				if (certificate is X509Certificate2)
+				{
+					ValidateCertificate((X509Certificate2)certificate);
+				}
+
+				LogMessage("BEGIN Dumping Certificates");
+
 				int index = 0;
+				LogMessage($"Chain revocation flag: {chain.ChainPolicy.RevocationFlag}");
+				LogMessage($"Chain revocation mode: {chain.ChainPolicy.RevocationMode}");
+
 				foreach (X509ChainElement chainElement in chain.ChainElements)
 				{
 					index++;
-					DumpCertificate(chainElement.Certificate, $"Certificate {index}");
+					DumpCertificate(chainElement, $"Certificate {index}");
 				}
+
+				LogMessage("END Dumping Certificates");
 			}
 
 			if (sslpolicyerrors != SslPolicyErrors.None)
@@ -822,9 +834,11 @@ namespace SmtpClientDemo.WinForms
 		}
 
 		private void DumpCertificate(
-			X509Certificate2 certificate,
+			X509ChainElement chainElement,
 			string label)
 		{
+			X509Certificate2 certificate = chainElement.Certificate;
+
 			using (StreamWriter streamWriter = GetLogStreamWriter())
 			{
 				streamWriter.WriteLine();
@@ -837,6 +851,7 @@ namespace SmtpClientDemo.WinForms
 				streamWriter.WriteLine("Issuer: {0}", certificate.IssuerName.Name);
 				streamWriter.WriteLine("Valid from: {0:d}", certificate.NotBefore);
 				streamWriter.WriteLine("Valid to: {0:d}", certificate.NotAfter);
+				streamWriter.WriteLine("Certificate is valid: {0}", certificate.Verify());
 				streamWriter.WriteLine("Extensions");
 
 				foreach (X509Extension extension in certificate.Extensions)
@@ -882,6 +897,74 @@ namespace SmtpClientDemo.WinForms
 				}
 			}
 		}
+
+		private bool ValidateCertificate(X509Certificate2 certificate)
+		{
+			// Output chain information of the selected certificate.
+			X509Chain chain = new X509Chain();
+			chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
+			chain.ChainPolicy.RevocationFlag = X509RevocationFlag.EntireChain;
+			chain.Build(certificate);
+
+			using (StreamWriter streamWriter = GetLogStreamWriter())
+			{
+				streamWriter.WriteLine("BEGIN Chain Information");
+				streamWriter.WriteLine("Chain revocation flag: {0}", chain.ChainPolicy.RevocationFlag);
+				streamWriter.WriteLine("Chain revocation mode: {0}", chain.ChainPolicy.RevocationMode);
+				streamWriter.WriteLine("Chain verification flag: {0}", chain.ChainPolicy.VerificationFlags);
+				streamWriter.WriteLine("Chain verification time: {0}", chain.ChainPolicy.VerificationTime);
+				streamWriter.WriteLine("Chain application policy count: {0}", chain.ChainPolicy.ApplicationPolicy.Count);
+				streamWriter.WriteLine(
+					"Chain certificate policy count: {0}",
+					chain.ChainPolicy.CertificatePolicy.Count);
+
+				// Output chain status information.
+				streamWriter.WriteLine($"Chain Status Entries ({chain.ChainStatus.Length})");
+				foreach (X509ChainStatus chainStatus in chain.ChainStatus)
+				{
+					streamWriter.WriteLine(
+						"\tChain Status Entry: {0} - {1}",
+						chainStatus.Status,
+						chainStatus.StatusInformation);
+				}
+
+				streamWriter.WriteLine();
+
+				// Output chain element information.
+				streamWriter.WriteLine("Chain Element Information");
+				streamWriter.WriteLine("\tNumber of chain elements: {0}", chain.ChainElements.Count);
+				streamWriter.WriteLine("\tChain elements synchronized: {0}", chain.ChainElements.IsSynchronized);
+
+				streamWriter.WriteLine();
+
+				foreach (X509ChainElement element in chain.ChainElements)
+				{
+					streamWriter.WriteLine("\tElement issuer name: {0}", element.Certificate.Issuer);
+					streamWriter.WriteLine("\tElement thumbprint: {0}", element.Certificate.Thumbprint);
+					streamWriter.WriteLine("\tNumber of element extensions: {0}", element.Certificate.Extensions.Count);
+					streamWriter.WriteLine("\tElement certificate valid until: {0}", element.Certificate.NotAfter);
+					streamWriter.WriteLine("\tElement certificate is valid: {0}", element.Certificate.Verify());
+					streamWriter.WriteLine("\tElement information: {0}", element.Information);
+
+					// Output chain ELEMENT status information.
+					streamWriter.WriteLine($"\tChain Element Status Entries ({element.ChainElementStatus.Length})");
+					foreach (X509ChainStatus chainElementStatus in element.ChainElementStatus)
+					{
+						streamWriter.WriteLine("\t\tChain Element Status Entry");
+						streamWriter.WriteLine("\t\t\t" + chainElementStatus.Status);
+						streamWriter.WriteLine("\t\t\t" + chainElementStatus.StatusInformation);
+					}
+
+					streamWriter.WriteLine();
+				}
+
+				streamWriter.WriteLine("END Chain Information");
+
+			}
+
+			return true;
+		}
+
 
 		private void LogMessage(string message = "")
 		{
