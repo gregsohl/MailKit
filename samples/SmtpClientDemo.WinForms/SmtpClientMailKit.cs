@@ -25,10 +25,12 @@ namespace SmtpClientDemo.WinForms
 		public SmtpClientMailKit(RemoteCertificateValidationCallback remoteCertificateValidationCallback)
 		{
 			m_RemoteCertificateValidationCallback = remoteCertificateValidationCallback;
+			m_CheckCertificateRevocation = true;
 
 			m_Client = new SmtpClient
 			{
-				ServerCertificateValidationCallback = remoteCertificateValidationCallback
+				ServerCertificateValidationCallback = remoteCertificateValidationCallback,
+				CheckCertificateRevocation =  m_CheckCertificateRevocation
 			};
 		}
 
@@ -71,6 +73,12 @@ namespace SmtpClientDemo.WinForms
 
 				return SmtpCapabilities.None;
 			}
+		}
+
+		public bool CheckCertificateRevocation
+		{
+			get { return m_CheckCertificateRevocation; }
+			set { m_CheckCertificateRevocation = value; }
 		}
 
 		public int BatchSize { get; set; }
@@ -147,6 +155,7 @@ namespace SmtpClientDemo.WinForms
 
 			m_Client = (Logger == null) ? new SmtpClient() : new SmtpClient(Logger);
 			m_Client.ServerCertificateValidationCallback = m_RemoteCertificateValidationCallback;
+			m_Client.CheckCertificateRevocation = CheckCertificateRevocation;
 
 			if (string.IsNullOrWhiteSpace(Server))
 			{
@@ -222,6 +231,7 @@ namespace SmtpClientDemo.WinForms
 
 		private SmtpClient m_Client;
 		private int m_MessagesInCurrentBatch;
+		private bool m_CheckCertificateRevocation;
 
 		#endregion Private Fields
 	}

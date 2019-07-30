@@ -26,6 +26,8 @@ namespace SmtpClientDemo.WinForms
 
 		SmtpCapabilities Capabilities { get; }
 
+		bool CheckCertificateRevocation { get; set; }
+
 		bool IsConnected { get; }
 
 		ProtocolLogger Logger { get; set; }

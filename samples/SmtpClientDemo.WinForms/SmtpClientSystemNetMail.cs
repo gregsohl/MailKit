@@ -40,6 +40,8 @@ namespace SmtpClientDemo.WinForms
 			if (m_Client != null)
 			{
 				Disconnect();
+				m_Client.Dispose();
+				m_Client = null;
 			}
 
 			m_Client = new System.Net.Mail.SmtpClient(Server, Port);
@@ -90,6 +92,16 @@ namespace SmtpClientDemo.WinForms
 		public SmtpCapabilities Capabilities
 		{
 			get { return SmtpCapabilities.None; }
+		}
+
+		public bool CheckCertificateRevocation
+		{
+			get { return m_CheckCertificateRevocation; }
+			set
+			{
+				m_Dirty = true;
+				m_CheckCertificateRevocation = value;
+			}
 		}
 
 		public bool IsConnected
@@ -283,6 +295,7 @@ namespace SmtpClientDemo.WinForms
 
 		private SmtpLogger m_Logger;
 		private ProtocolLogger m_ProtocolLogger;
+		private bool m_CheckCertificateRevocation;
 
 		#endregion Private Fields
 	}

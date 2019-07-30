@@ -39,7 +39,7 @@ namespace SmtpClientDemo.WinForms
 		{
 			base.OnLoad(e);
 
-			m_Client = GetClient();
+			CreateClient();
 
 			if (m_Client is SmtpClientSystemNetMail)
 			{
@@ -55,18 +55,20 @@ namespace SmtpClientDemo.WinForms
 			LoadFormDefaultValuesFromConfig();
 		}
 
-		private ISmtpClient GetClient()
+		private ISmtpClient CreateClient()
 		{
 			string clientType = ConfigurationManager.AppSettings[APP_SETTINGS_CLIENT_TYPE].ToUpper();
 
 			switch (clientType)
 			{
 				case APP_SETTINGS_CLIENT_TYPE_DOTNET:
-					return new SmtpClientSystemNetMail();
+					m_Client = new SmtpClientSystemNetMail();
+					return m_Client;
 
 				case APP_SETTINGS_CLIENT_TYPE_MAILKIT:
 				default:
-					return new SmtpClientMailKit(ServerCertificateValidationCallback);
+					m_Client = new SmtpClientMailKit(ServerCertificateValidationCallback);
+					return m_Client;
 			}
 		}
 
@@ -284,6 +286,7 @@ namespace SmtpClientDemo.WinForms
 			textBoxUser.Visible = show;
 			labelPassword.Visible = show;
 			textBoxPassword.Visible = show;
+			buttonSavePassword.Visible = show;
 		}
 
 		private void ButtonClearLogOnClick(object sender, EventArgs e)
@@ -728,6 +731,15 @@ namespace SmtpClientDemo.WinForms
 			}
 		}
 
+		private void CheckBoxCheckCertificateRevocationOnCheckedChanged(object sender, EventArgs e)
+		{
+			if (m_Client != null)
+			{
+				m_Client.CheckCertificateRevocation = checkBoxCheckCertificateRevocation.Checked;
+				m_Client.Disconnect();
+			}
+		}
+
 		private void ButtonSavePasswordOnClick(object sender, EventArgs e)
 		{
 			string encryptedPassword = Encryption.DpapiEncrypt(textBoxPassword.Text);
@@ -812,12 +824,14 @@ namespace SmtpClientDemo.WinForms
 
 				int index = 0;
 				LogMessage($"Chain revocation flag: {chain.ChainPolicy.RevocationFlag}");
-				LogMessage($"Chain revocation mode: {chain.ChainPolicy.RevocationMode}");
+				string message = $"Chain revocation mode: {chain.ChainPolicy.RevocationMode}";
+				LogMessage(message);
 
 				foreach (X509ChainElement chainElement in chain.ChainElements)
 				{
 					index++;
 					DumpCertificate(chainElement, $"Certificate {index}");
+					DumpCertificateChainElement(chainElement);
 				}
 
 				LogMessage("END Dumping Certificates");
@@ -902,15 +916,23 @@ namespace SmtpClientDemo.WinForms
 		{
 			// Output chain information of the selected certificate.
 			X509Chain chain = new X509Chain();
-			chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
+			chain.ChainPolicy.RevocationMode = checkBoxCheckCertificateRevocation.Checked ? X509RevocationMode.Online : X509RevocationMode.NoCheck;
 			chain.ChainPolicy.RevocationFlag = X509RevocationFlag.EntireChain;
 			chain.Build(certificate);
 
+			DumpCertificateChain(chain);
+
+			return true;
+		}
+
+		private void DumpCertificateChain(X509Chain chain)
+		{
 			using (StreamWriter streamWriter = GetLogStreamWriter())
 			{
 				streamWriter.WriteLine("BEGIN Chain Information");
 				streamWriter.WriteLine("Chain revocation flag: {0}", chain.ChainPolicy.RevocationFlag);
-				streamWriter.WriteLine("Chain revocation mode: {0}", chain.ChainPolicy.RevocationMode);
+				string message = $"Chain revocation mode: {chain.ChainPolicy.RevocationMode}";
+				streamWriter.WriteLine(message);
 				streamWriter.WriteLine("Chain verification flag: {0}", chain.ChainPolicy.VerificationFlags);
 				streamWriter.WriteLine("Chain verification time: {0}", chain.ChainPolicy.VerificationTime);
 				streamWriter.WriteLine("Chain application policy count: {0}", chain.ChainPolicy.ApplicationPolicy.Count);
@@ -939,32 +961,44 @@ namespace SmtpClientDemo.WinForms
 
 				foreach (X509ChainElement element in chain.ChainElements)
 				{
-					streamWriter.WriteLine("\tElement issuer name: {0}", element.Certificate.Issuer);
-					streamWriter.WriteLine("\tElement thumbprint: {0}", element.Certificate.Thumbprint);
-					streamWriter.WriteLine("\tNumber of element extensions: {0}", element.Certificate.Extensions.Count);
-					streamWriter.WriteLine("\tElement certificate valid until: {0}", element.Certificate.NotAfter);
-					streamWriter.WriteLine("\tElement certificate is valid: {0}", element.Certificate.Verify());
-					streamWriter.WriteLine("\tElement information: {0}", element.Information);
-
-					// Output chain ELEMENT status information.
-					streamWriter.WriteLine($"\tChain Element Status Entries ({element.ChainElementStatus.Length})");
-					foreach (X509ChainStatus chainElementStatus in element.ChainElementStatus)
-					{
-						streamWriter.WriteLine("\t\tChain Element Status Entry");
-						streamWriter.WriteLine("\t\t\t" + chainElementStatus.Status);
-						streamWriter.WriteLine("\t\t\t" + chainElementStatus.StatusInformation);
-					}
-
-					streamWriter.WriteLine();
+					DumpCertificateChainElement(streamWriter, element);
 				}
 
 				streamWriter.WriteLine("END Chain Information");
-
 			}
-
-			return true;
 		}
 
+		private void DumpCertificateChainElement(
+			X509ChainElement chainElement)
+		{
+			using (StreamWriter streamWriter = GetLogStreamWriter())
+			{
+				DumpCertificateChainElement(streamWriter, chainElement);
+			}
+		}
+
+		private void DumpCertificateChainElement(
+			StreamWriter streamWriter,
+			X509ChainElement chainElement)
+		{
+			streamWriter.WriteLine("\tElement issuer name: {0}", chainElement.Certificate.Issuer);
+			streamWriter.WriteLine("\tElement thumbprint: {0}", chainElement.Certificate.Thumbprint);
+			streamWriter.WriteLine("\tNumber of element extensions: {0}", chainElement.Certificate.Extensions.Count);
+			streamWriter.WriteLine("\tElement certificate valid until: {0}", chainElement.Certificate.NotAfter);
+			streamWriter.WriteLine("\tElement certificate is valid: {0}", chainElement.Certificate.Verify());
+			streamWriter.WriteLine("\tElement information: {0}", chainElement.Information);
+
+			// Output chain ELEMENT status information.
+			streamWriter.WriteLine($"\tChain Element Status Entries ({chainElement.ChainElementStatus.Length})");
+			foreach (X509ChainStatus chainElementStatus in chainElement.ChainElementStatus)
+			{
+				streamWriter.WriteLine("\t\tChain Element Status Entry");
+				streamWriter.WriteLine("\t\t\t" + chainElementStatus.Status);
+				streamWriter.WriteLine("\t\t\t" + chainElementStatus.StatusInformation);
+			}
+
+			streamWriter.WriteLine();
+		}
 
 		private void LogMessage(string message = "")
 		{

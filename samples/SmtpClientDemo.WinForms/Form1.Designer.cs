@@ -72,6 +72,7 @@
 			this.buttonClearLog = new System.Windows.Forms.Button();
 			this.checkBoxDisplayCertificate = new System.Windows.Forms.CheckBox();
 			this.checkBoxLogCertificates = new System.Windows.Forms.CheckBox();
+			this.checkBoxCheckCertificateRevocation = new System.Windows.Forms.CheckBox();
 			this.groupBoxRepeat.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.textBoxBatchSize)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.textBoxRepeatSeconds)).BeginInit();
@@ -249,7 +250,7 @@
 			// 
 			this.labelPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelPassword.AutoSize = true;
-			this.labelPassword.Location = new System.Drawing.Point(326, 289);
+			this.labelPassword.Location = new System.Drawing.Point(326, 314);
 			this.labelPassword.Name = "labelPassword";
 			this.labelPassword.Size = new System.Drawing.Size(56, 13);
 			this.labelPassword.TabIndex = 23;
@@ -258,7 +259,7 @@
 			// labelUser
 			// 
 			this.labelUser.AutoSize = true;
-			this.labelUser.Location = new System.Drawing.Point(12, 289);
+			this.labelUser.Location = new System.Drawing.Point(12, 314);
 			this.labelUser.Name = "labelUser";
 			this.labelUser.Size = new System.Drawing.Size(32, 13);
 			this.labelUser.TabIndex = 22;
@@ -268,7 +269,7 @@
 			// 
 			this.textBoxUser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxUser.Location = new System.Drawing.Point(76, 286);
+			this.textBoxUser.Location = new System.Drawing.Point(76, 311);
 			this.textBoxUser.Name = "textBoxUser";
 			this.textBoxUser.Size = new System.Drawing.Size(230, 20);
 			this.textBoxUser.TabIndex = 10;
@@ -276,7 +277,7 @@
 			// textBoxPassword
 			// 
 			this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxPassword.Location = new System.Drawing.Point(388, 287);
+			this.textBoxPassword.Location = new System.Drawing.Point(388, 312);
 			this.textBoxPassword.Name = "textBoxPassword";
 			this.textBoxPassword.Size = new System.Drawing.Size(121, 20);
 			this.textBoxPassword.TabIndex = 11;
@@ -297,7 +298,7 @@
 			this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.buttonClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonClose.Location = new System.Drawing.Point(460, 512);
+			this.buttonClose.Location = new System.Drawing.Point(460, 538);
 			this.buttonClose.Name = "buttonClose";
 			this.buttonClose.Size = new System.Drawing.Size(75, 23);
 			this.buttonClose.TabIndex = 19;
@@ -309,7 +310,7 @@
 			// 
 			this.textBoxLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxLog.Location = new System.Drawing.Point(76, 312);
+			this.textBoxLog.Location = new System.Drawing.Point(76, 337);
 			this.textBoxLog.Multiline = true;
 			this.textBoxLog.Name = "textBoxLog";
 			this.textBoxLog.ReadOnly = true;
@@ -322,7 +323,7 @@
 			// label7
 			// 
 			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(12, 312);
+			this.label7.Location = new System.Drawing.Point(12, 337);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(28, 13);
 			this.label7.TabIndex = 30;
@@ -332,7 +333,7 @@
 			// 
 			this.buttonCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.buttonCopy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonCopy.Location = new System.Drawing.Point(76, 422);
+			this.buttonCopy.Location = new System.Drawing.Point(76, 448);
 			this.buttonCopy.Name = "buttonCopy";
 			this.buttonCopy.Size = new System.Drawing.Size(66, 23);
 			this.buttonCopy.TabIndex = 12;
@@ -345,7 +346,7 @@
 			// 
 			this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonSend.Location = new System.Drawing.Point(379, 512);
+			this.buttonSend.Location = new System.Drawing.Point(379, 538);
 			this.buttonSend.Name = "buttonSend";
 			this.buttonSend.Size = new System.Drawing.Size(75, 23);
 			this.buttonSend.TabIndex = 18;
@@ -369,7 +370,7 @@
 			// 
 			this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.progressBar1.Location = new System.Drawing.Point(0, 455);
+			this.progressBar1.Location = new System.Drawing.Point(0, 481);
 			this.progressBar1.MarqueeAnimationSpeed = 0;
 			this.progressBar1.Name = "progressBar1";
 			this.progressBar1.Size = new System.Drawing.Size(555, 10);
@@ -380,7 +381,7 @@
 			// 
 			this.buttonListServerCapabilities.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonListServerCapabilities.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonListServerCapabilities.Location = new System.Drawing.Point(388, 422);
+			this.buttonListServerCapabilities.Location = new System.Drawing.Point(388, 448);
 			this.buttonListServerCapabilities.Name = "buttonListServerCapabilities";
 			this.buttonListServerCapabilities.Size = new System.Drawing.Size(147, 23);
 			this.buttonListServerCapabilities.TabIndex = 17;
@@ -397,7 +398,7 @@
 			this.groupBoxRepeat.Controls.Add(this.buttonRepeatedSend);
 			this.groupBoxRepeat.Controls.Add(this.label12);
 			this.groupBoxRepeat.Controls.Add(this.textBoxRepeatSeconds);
-			this.groupBoxRepeat.Location = new System.Drawing.Point(7, 471);
+			this.groupBoxRepeat.Location = new System.Drawing.Point(7, 497);
 			this.groupBoxRepeat.Name = "groupBoxRepeat";
 			this.groupBoxRepeat.Size = new System.Drawing.Size(262, 68);
 			this.groupBoxRepeat.TabIndex = 38;
@@ -493,7 +494,7 @@
 			// 
 			// trackBarLogSetting
 			// 
-			this.trackBarLogSetting.Location = new System.Drawing.Point(7, 359);
+			this.trackBarLogSetting.Location = new System.Drawing.Point(7, 384);
 			this.trackBarLogSetting.Maximum = 1;
 			this.trackBarLogSetting.Name = "trackBarLogSetting";
 			this.trackBarLogSetting.Size = new System.Drawing.Size(63, 42);
@@ -503,7 +504,7 @@
 			// label14
 			// 
 			this.label14.AutoSize = true;
-			this.label14.Location = new System.Drawing.Point(7, 375);
+			this.label14.Location = new System.Drawing.Point(7, 400);
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(66, 13);
 			this.label14.TabIndex = 40;
@@ -514,7 +515,7 @@
 			this.buttonSavePassword.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.buttonSavePassword.Image = global::SmtpClientDemo.WinForms.Properties.Resources.save16x16;
 			this.buttonSavePassword.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-			this.buttonSavePassword.Location = new System.Drawing.Point(514, 286);
+			this.buttonSavePassword.Location = new System.Drawing.Point(514, 311);
 			this.buttonSavePassword.Name = "buttonSavePassword";
 			this.buttonSavePassword.Size = new System.Drawing.Size(21, 22);
 			this.buttonSavePassword.TabIndex = 41;
@@ -526,7 +527,7 @@
 			// 
 			this.buttonCertificateTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonCertificateTest.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonCertificateTest.Location = new System.Drawing.Point(277, 422);
+			this.buttonCertificateTest.Location = new System.Drawing.Point(277, 448);
 			this.buttonCertificateTest.Name = "buttonCertificateTest";
 			this.buttonCertificateTest.Size = new System.Drawing.Size(105, 23);
 			this.buttonCertificateTest.TabIndex = 16;
@@ -539,7 +540,7 @@
 			// 
 			this.buttonClearLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.buttonClearLog.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.buttonClearLog.Location = new System.Drawing.Point(148, 422);
+			this.buttonClearLog.Location = new System.Drawing.Point(148, 448);
 			this.buttonClearLog.Name = "buttonClearLog";
 			this.buttonClearLog.Size = new System.Drawing.Size(66, 23);
 			this.buttonClearLog.TabIndex = 13;
@@ -551,7 +552,7 @@
 			// 
 			this.checkBoxDisplayCertificate.AutoSize = true;
 			this.checkBoxDisplayCertificate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.checkBoxDisplayCertificate.Location = new System.Drawing.Point(277, 404);
+			this.checkBoxDisplayCertificate.Location = new System.Drawing.Point(277, 429);
 			this.checkBoxDisplayCertificate.Name = "checkBoxDisplayCertificate";
 			this.checkBoxDisplayCertificate.Size = new System.Drawing.Size(107, 17);
 			this.checkBoxDisplayCertificate.TabIndex = 14;
@@ -562,19 +563,33 @@
 			// 
 			this.checkBoxLogCertificates.AutoSize = true;
 			this.checkBoxLogCertificates.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.checkBoxLogCertificates.Location = new System.Drawing.Point(388, 404);
+			this.checkBoxLogCertificates.Location = new System.Drawing.Point(388, 429);
 			this.checkBoxLogCertificates.Name = "checkBoxLogCertificates";
 			this.checkBoxLogCertificates.Size = new System.Drawing.Size(96, 17);
 			this.checkBoxLogCertificates.TabIndex = 15;
 			this.checkBoxLogCertificates.Text = "Log Certificates";
 			this.checkBoxLogCertificates.UseVisualStyleBackColor = true;
 			// 
+			// checkBoxCheckCertificateRevocation
+			// 
+			this.checkBoxCheckCertificateRevocation.AutoSize = true;
+			this.checkBoxCheckCertificateRevocation.Checked = true;
+			this.checkBoxCheckCertificateRevocation.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkBoxCheckCertificateRevocation.Location = new System.Drawing.Point(76, 288);
+			this.checkBoxCheckCertificateRevocation.Name = "checkBoxCheckCertificateRevocation";
+			this.checkBoxCheckCertificateRevocation.Size = new System.Drawing.Size(165, 17);
+			this.checkBoxCheckCertificateRevocation.TabIndex = 42;
+			this.checkBoxCheckCertificateRevocation.Text = "Check Certificate Revocation";
+			this.checkBoxCheckCertificateRevocation.UseVisualStyleBackColor = true;
+			this.checkBoxCheckCertificateRevocation.CheckedChanged += new System.EventHandler(this.CheckBoxCheckCertificateRevocationOnCheckedChanged);
+			// 
 			// SmtpClientDemo
 			// 
 			this.AcceptButton = this.buttonSend;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(555, 547);
+			this.ClientSize = new System.Drawing.Size(555, 573);
+			this.Controls.Add(this.checkBoxCheckCertificateRevocation);
 			this.Controls.Add(this.checkBoxLogCertificates);
 			this.Controls.Add(this.checkBoxDisplayCertificate);
 			this.Controls.Add(this.buttonClearLog);
@@ -673,6 +688,7 @@
 		private System.Windows.Forms.Button buttonClearLog;
 		private System.Windows.Forms.CheckBox checkBoxDisplayCertificate;
 		private System.Windows.Forms.CheckBox checkBoxLogCertificates;
+		private System.Windows.Forms.CheckBox checkBoxCheckCertificateRevocation;
 	}
 }
 
